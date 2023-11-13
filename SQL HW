@@ -1,0 +1,134 @@
+.open restaurant.db
+  -- 1 customers table
+CREATE TABLE IF NOT EXISTS customers (
+  id INT UNIQUE,
+  name VARCHAR(30),
+  Age INT,
+  city TEXT
+);
+
+-- insert customers
+INSERT INTO customers VALUES 
+  (1, "Susan", "25", "New York"),
+  (2, "Jeff", "30", "San Francisco"),
+  (3, "Beth", "18", "Bangkok"),
+  (4, "Jonathan", "44", "Bangkok"),
+  (5, "Willy", "38", "Bangkok");
+
+-- 2 transactions table
+CREATE TABLE IF NOT EXISTS transactions (
+  transaction_id INT UNIQUE,
+  id INT,
+  staff_id INT,
+  total_price DOUBLE,
+  transaction_date DATE
+);
+
+-- insert table transaction
+INSERT INTO transactions VALUES
+  (1, 3, 1, 41.0, '2023-06-01'),
+  (2, 4, 2, 164.5, '2023-04-12'),
+  (3, 1, 2, 122.8, '2022-21-31'),
+  (4, 5, 1, 304.2, '2023-01-01');
+
+-- 3 menu table
+CREATE TABLE IF NOT EXISTS menu (
+  food_id INT,
+  food_name TEXT,
+  food_price DOUBLE
+);
+
+INSERT INTO menu VALUES
+  (1, 'hamburger', 50.7),
+  (2, 'hotdog', 20.5),
+  (3, 'waffle', 12.4);
+
+-- 4 table order lists
+CREATE TABLE IF NOT EXISTS order_lists (
+  order_id INT,
+  tracsaction_id INT,
+  food_id INT, 
+  quantity INT
+);
+
+
+/*ALTER TABLE order_lists
+RENAME COLUMN tracsaction_id TO transaction_id;*/
+
+INSERT INTO order_lists VALUES
+  (1, 2, 3, 1),
+  (2, 2, 1, 3),
+  (3, 3, 3, 2),
+  (4, 4, 1, 6),
+  (5, 1, 2, 2),
+  (6, 3, 2, 4);
+
+-- 5  table staff
+CREATE TABLE IF NOT EXISTS staff (
+  staff_id INT UNIQUE,
+  staff_name VARCHAR(30),
+  hiring_date DATE
+);
+
+INSERT INTO staff values
+  (1, 'Jessica', '2022-08-09'),
+  (2, 'Harry', '2023-01-06'); 
+
+/*DROP TABLE customers;
+DROP TABLE transactions;
+DROP table menu;
+DROP TABLE order_lists;
+DROP TABLE staff;*/
+
+.table
+.mode column
+
+-- subquery
+SELECT * FROM (
+  SELECT * FROM customers
+  WHERE city = 'Bangkok'
+);
+
+SELECT "What menu do customers who live in Bangkok like to order in 2023 with quantity >=3?";
+
+--WITH and JOIN
+WITH sub1 AS (SELECT * FROM customers
+  WHERE city = 'Bangkok'), 
+  sub2 AS (SELECT * FROM transactions 
+  WHERE STRFTIME("%Y", transaction_date) = "2023"),
+  sub3 AS (SELECT * FROM order_lists 
+  WHERE quantity >= 3),
+  sub4 AS (SELECT * FROM menu)
+  
+SELECT DISTINCT
+  sub1.name AS customer_name,
+  sub1.city,
+  sub2.transaction_date,
+  sub4.food_name,
+  sub3.quantity
+FROM sub2
+JOIN sub1
+ON sub1.id = sub2.id
+JOIN sub3
+ON sub2.transaction_id = sub3.transaction_id
+JOIN sub4
+ON sub3.food_id = sub4.food_id;
+
+SELECT "Who order food more than 100.0?";
+WITH sub5 AS (SELECT * FROM customers),
+  sub6 AS (SELECT * FROM transactions
+  WHERE total_price >= 100.0)
+SELECT 
+  sub5.name,
+  sub6.total_price
+FROM sub5
+JOIN sub6
+ON sub5.id = sub6.id;
+
+--aggregate function
+SELECT 'Min, Max, and Avg of all purchase';
+SELECT 
+  min(total_price) AS min_purchase,
+  max(total_price) AS max_purchase,
+  avg(total_price) AS avg_purchase
+FROM transactions;
