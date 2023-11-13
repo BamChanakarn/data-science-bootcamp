@@ -1,0 +1,40 @@
+chatbot_order_pizza <- function() {
+  price <- 0
+  while (price ==0) {
+  print("Welcome! Thank you for choosing BOOTCAMP PIZZA.")
+  cat("Please select the size of pizza. \nSmall = 150 baht, Medium = 200 baht, Large = 300 baht\n")
+  size <- tolower(readLines("stdin", n=1))
+  cat("How many do you want? \nQuantity: ")
+  quantity <- readLines("stdin", n=1)
+  Q <- as.integer(quantity)
+    if (size == "small") {
+      price = 150 * Q
+      print(paste("Current price is ",price,"baht"))
+    } else if (size == "medium") {
+      price = 200 * Q
+      print(paste("Current price is ",price,"baht"))
+    } else {
+      price = 300 * Q
+      print(paste("Current price is ",price,"baht"))
+    }
+  }
+  print("-------------------------")
+  cat("What toppings would you like to on top? \n\tPineapple, Mushroom, Tomato, \n\tBeacon, Chilli, Ketchup\n")
+  toppings <- tolower(readLines("stdin", n=1))
+  cat(paste("OK, your order is",quantity,size, "size(s) of pizza with",toppings, ". I'm I correct? (Yes, No)\n"))
+   confirm <- tolower(readLines("stdin", n=1))
+  if (confirm == "yes") {
+    print("Thank you for your order. Have a good Day!")
+  } else {
+    print("I appologize for mistakes. Please order again. TT^TT")
+    print("---------------------------------")
+  }
+}
+
+reorder <- function(){
+   chatbot_order_pizza()
+  }
+
+
+chatbot_order_pizza()
+reorder()
