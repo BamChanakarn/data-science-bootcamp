@@ -1,0 +1,81 @@
+#Create function
+play_game <- function() {
+  print("Today we will play rock, paper, scissors! Let's start now!!")
+  player_score <- 0
+  bot_score <- 0
+  round <- 1
+  choice <- c("R", "P", "S")
+  bot_choice <- sample(choice, 1)
+  print("Please select only one of these: R (rock), P (paper), or S (scissors). Type 'Q' if you want to stop playing")
+
+#Identify cases
+win_case <- function() {
+  cat("Result: You win!!\n")
+  print(paste("Your choice: ", player_choice))
+  print(paste("Bot's choice: ", bot_choice))
+}
+  
+lose_case <- function() {
+  cat("Result: You lose. Let's try again!!\n")
+  print(paste("Your choice: ", player_choice))
+  print(paste("Bot's choice: ", bot_choice))
+}
+
+tie_case <- function(){
+  cat("Result: Tie\n")
+  print(paste("Your choice: ", player_choice))
+  print(paste("Bot's choice: ", bot_choice))
+}
+
+stop_case <- function(){
+  print("Thank you for playing!")
+  round = round - 2
+  sum_round <- as.character(round)
+  cat("\tSummary: \n\tTotal play round(s) = ",sum_round)
+  cat(paste("\n\tYour total score = ",player_score), paste("\n\tBot's total score = ",bot_score))
+  if (player_score > bot_score) {
+    cat("\n\tYOU WON")
+  } else if (player_score < bot_score) {
+    cat("\n\tYOU LOST\n")
+  } else {
+    cat("\n\tYOU TIE")
+  }
+}
+
+  ## Condition
+  while (round) {
+    print(paste("round ",round))
+    player_choice <- toupper(readLines("stdin", n=1))
+   if (player_choice == "S" & bot_choice == "P") {
+      win_case()
+      player_score = player_score + 1
+    } else if (player_choice == "S" & bot_choice == "R") {
+      lose_case()
+      bot_score = bot_score + 1
+    } else if (player_choice == "R" & bot_choice == "P") {
+      lose_case()
+      bot_score = bot_score + 1
+    } else if (player_choice == "R" & bot_choice == "S") {
+      win_case()
+      player_score = player_score + 1
+    } else if (player_choice == "P" & bot_choice == "S"){
+      lose_case()
+      bot_score = bot_score + 1
+    } else if (player_choice == "P" & bot_choice == "R") { 
+      win_case()
+      player_score = player_score + 1
+    } else if (player_choice == bot_choice) {
+      tie_case()
+      player_score = player_score
+      bot_score = bot_score
+    } 
+  round = round + 1 
+  if (player_choice == "Q") {
+      stop_case()
+      break
+    }
+  }
+}
+
+# Run the game
+play_game()
