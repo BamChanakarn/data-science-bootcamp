@@ -1,0 +1,72 @@
+## Datavisualization using diamonds library in R
+library(tidyverse)
+
+View(diamonds)
+
+#Check is there is any missing values in dataset
+anyNA(diamonds)
+
+set.seed(89) # Lock sampling data
+diamonds_sample <- diamonds %>% sample_frac(0.1) # Random 10% samples 
+
+diamonds$color %>% head
+
+diamonds$clarity %>% head
+
+## 1
+ggplot(diamonds_sample,
+       aes(carat, price, col = cut)) + 
+  geom_point(size = 1, alpha = 0.4) +
+  theme_minimal() +
+  scale_color_brewer(type = "seq", palette = 10) +
+  facet_wrap(~clarity,ncol = 2) +
+  labs(title = "Relationship between Carat and Price by Clarity",
+       x = "Carat",
+       y = "Price",
+       caption = "R Studio") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+## 2.The most common clarity and cut
+diamonds %>%  ggplot(aes(clarity, cut))+
+  geom_count(color = "orange")+
+  labs(title = "Most common clarity and cut of diamonds",
+       x = "Clarity",
+       y = "Cut",
+       caption = "R Studio") +
+  theme(plot.title = element_text(hjust = 0.5))
+  
+## 3. Percent color
+diamonds %>% 
+  group_by(color) %>%
+  summarise(percent_color = n()/nrow(diamonds)) %>%
+  ggplot(aes(x = "", y = percent_color, fill = color)) +
+  geom_bar(stat = "identity", color = "white") +
+  coord_polar(theta = "y") +
+  geom_text(aes(x = 1.6, 
+                #label = paste0(round(percent_color,2),"%")),
+                label = scales::percent(percent_color, accuracy = .1)),
+                position = position_stack(vjust = 0.6),
+                color = "blue") +
+  labs(title = element_text("Percentage of diamonds by color"),
+      x = "color") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+##4.The Average price of each cut
+diamonds %>% group_by(cut) %>%
+    summarise(avg_price = mean(price)) %>% 
+    ggplot(aes(x = cut, y = avg_price)) +
+    geom_col(width = 0.5, fill = "#f086d6") +
+    geom_text(aes(label = round(avg_price, 2)), vjust = -0.5) +
+    labs(title = "The Average Price of diamonds by cut") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    theme_minimal()
+                             
+## 5. Price of diamonds for each Clarity
+diamonds %>%  
+  ggplot(aes(x = clarity, y = price)) +
+  geom_boxplot(fill = "cyan") +
+  theme_minimal() +
+  labs(title = "The Price of diamonds for each Clarity",
+       x = "Clarity",
+       y = "Price") +
+  theme(plot.title = element_text(hjust = 0.5))
